@@ -1,114 +1,82 @@
-let cartItems = JSON.parse(localStorage.getItem("cart")) || [];
-let discount = 0;
-let offerTotal = 0;
-let mrpTotal = 0;
-let shipping = 0;
+const __ENCODED_CODE__ = `bGV0IGNhcnRJdGVtcyA9IEpTT04ucGFyc2UobG9jYWxTdG9yYWdlLmdldEl0ZW0oImNhcnQiKSkg
+fHwgW107CmxldCBkaXNjb3VudCA9IDA7CmxldCBvZmZlclRvdGFsID0gMDsKbGV0IG1ycFRvdGFs
+ID0gMDsKbGV0IHNoaXBwaW5nID0gMDsKCi8vIERPTSBlbGVtZW50cwpjb25zdCBvcmRlclN1bW1h
+cnkgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgib3JkZXJTdW1tYXJ5Iik7CmNvbnN0IHN1YnRv
+dGFsRWwgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgic3VidG90YWwiKTsKY29uc3QgdG90YWxF
+bCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJ0b3RhbCIpOwpjb25zdCBtcnB0b3RhbEVsID0g
+ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoIm1ycFRvdGFsIik7CmNvbnN0IHN1YnRvdGFsUm93ID0g
+ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoInN1YnRvdGFsUm93Iik7CmNvbnN0IG1ycHRvdGFsUm93
+ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoIm1ycHRvdGFsUm93Iik7CmNvbnN0IGNvdXBvbk1z
+ZyA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJjb3Vwb25NZXNzYWdlIik7CmNvbnN0IGFwcGx5
+Q291cG9uQnRuID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwcGx5Q291cG9uIik7CmNvbnN0
+IGNvdXBvbklucHV0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImNvdXBvbkNvZGUiKTsKCi8v
+IFJlbmRlciBjYXJ0IGl0ZW1zCmZ1bmN0aW9uIHJlbmRlckNhcnRJdGVtcygpIHsKICBkb2N1bWVu
+dC5xdWVyeVNlbGVjdG9yQWxsKCIub3JkZXItcm93LmR5bmFtaWMiKS5mb3JFYWNoKHJvdyA9PiBy
+b3cucmVtb3ZlKCkpOwogIG9mZmVyVG90YWwgPSAwOwogIG1ycFRvdGFsID0gMDsKCiAgY2FydEl0
+ZW1zLmZvckVhY2goaXRlbSA9PiB7CiAgICBjb25zdCBxdHkgPSBpdGVtLnF0eSB8fCAxOwogICAg
+Y29uc3Qgb2ZmZXJQcmljZSA9IGl0ZW0ub2ZmZXJQcmljZSB8fCAwOwogICAgY29uc3QgbXJwID0g
+aXRlbS5tcnAgfHwgb2ZmZXJQcmljZTsKICAgIGNvbnN0IGl0ZW1Ub3RhbCA9IG9mZmVyUHJpY2Ug
+KiBxdHk7CiAgICBjb25zdCBpdGVtTXJwVG90YWwgPSBtcnAgKiBxdHk7CgogICAgb2ZmZXJUb3Rh
+bCArPSBpdGVtVG90YWw7CiAgICBtcnBUb3RhbCArPSBpdGVtTXJwVG90YWw7CgogICAgY29uc3Qg
+cm93ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgiZGl2Iik7CiAgICByb3cuY2xhc3NOYW1lID0g
+Im9yZGVyLXJvdyBkeW5hbWljIjsKICAgIHJvdy5pbm5lckhUTUwgPSBgCiAgICAgIDxzcGFuPiR7
+aXRlbS50aXRsZX0gw5cgJHtxdHl9PC9zcGFuPgogICAgICA8c3Bhbj7igrkke2l0ZW1Ub3RhbC50
+b0ZpeGVkKDIpfTwvc3Bhbj4KICAgIGA7CiAgICBvcmRlclN1bW1hcnkuaW5zZXJ0QmVmb3JlKHJv
+dywgbXJwdG90YWxSb3cpOwogIH0pOwoKICB1cGRhdGVUb3RhbHMoKTsKfQoKLy8gQ2FsY3VsYXRl
+IGFuZCB1cGRhdGUgdG90YWxzCmZ1bmN0aW9uIHVwZGF0ZVRvdGFscygpIHsKICBjb25zdCB5b3VT
+YXZlZCA9IG1ycFRvdGFsIC0gb2ZmZXJUb3RhbDsKCiAgLy8gRGV0ZXJtaW5lIHNoaXBwaW5nIGNv
+c3QgKGRlZmF1bHQgbG9naWMsIHdpbGwgYmUgb3ZlcnJpZGRlbiBvbiBvcmRlciBwbGFjZSkKICBz
+aGlwcGluZyA9IDA7CiAgaWYgKG9mZmVyVG90YWwgPCA0OTkpIHNoaXBwaW5nID0gNTk7CiAgZWxz
+ZSBpZiAob2ZmZXJUb3RhbCA8IDE0OTkpIHNoaXBwaW5nID0gOTk7CgogIC8vIENyZWF0ZSBvciB1
+cGRhdGUgc2hpcHBpbmcgcm93CiAgbGV0IHNoaXBwaW5nUm93ID0gZG9jdW1lbnQuZ2V0RWxlbWVu
+dEJ5SWQoInNoaXBwaW5nUm93Iik7CiAgaWYgKCFzaGlwcGluZ1JvdykgewogICAgc2hpcHBpbmdS
+b3cgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJkaXYiKTsKICAgIHNoaXBwaW5nUm93LmNsYXNz
+TmFtZSA9ICJvcmRlci1yb3ciOwogICAgc2hpcHBpbmdSb3cuaWQgPSAic2hpcHBpbmdSb3ciOwog
+ICAgc2hpcHBpbmdSb3cuaW5uZXJIVE1MID0gYDxzcGFuPlNoaXBwaW5nPC9zcGFuPjxzcGFuIGlk
+PSJzaGlwcGluZ0ZlZSI+4oK5JHtzaGlwcGluZ308L3NwYW4+YDsKICAgIG9yZGVyU3VtbWFyeS5p
+bnNlcnRCZWZvcmUoc2hpcHBpbmdSb3csIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJ5b3VTYXZl
+ZFJvdyIpPy5uZXh0U2libGluZyB8fCBzdWJ0b3RhbFJvdy5uZXh0U2libGluZyk7CiAgfSBlbHNl
+IHsKICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJzaGlwcGluZ0ZlZSIpLnRleHRDb250ZW50
+ID0gYOKCuSR7c2hpcHBpbmd9YDsKICB9CgogIHN1YnRvdGFsRWwudGV4dENvbnRlbnQgPSBg4oK5
+JHtvZmZlclRvdGFsLnRvRml4ZWQoMil9YDsKICBtcnB0b3RhbEVsLnRleHRDb250ZW50ID0gYOKC
+uSR7bXJwVG90YWwudG9GaXhlZCgyKX1gOwogIHRvdGFsRWwudGV4dENvbnRlbnQgPSBg4oK5JHtN
+YXRoLm1heChvZmZlclRvdGFsIC0gZGlzY291bnQgKyBzaGlwcGluZywgMCkudG9GaXhlZCgyKX1g
+OwoKICBsZXQgc2F2ZWRSb3cgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgieW91U2F2ZWRSb3ci
+KTsKICBpZiAoIXNhdmVkUm93KSB7CiAgICBzYXZlZFJvdyA9IGRvY3VtZW50LmNyZWF0ZUVsZW1l
+bnQoImRpdiIpOwogICAgc2F2ZWRSb3cuY2xhc3NOYW1lID0gIm9yZGVyLXJvdyI7CiAgICBzYXZl
+ZFJvdy5pZCA9ICJ5b3VTYXZlZFJvdyI7CiAgICBzYXZlZFJvdy5pbm5lckhUTUwgPSBgPHNwYW4+
+WW91IFNhdmVkPC9zcGFuPjxzcGFuIGlkPSJ5b3VTYXZlZCIgc3R5bGU9ImNvbG9yOiBncmVlbjsi
+PuKCuSR7eW91U2F2ZWQudG9GaXhlZCgyKX08L3NwYW4+YDsKICAgIG9yZGVyU3VtbWFyeS5pbnNl
+cnRCZWZvcmUoc2F2ZWRSb3csIG1ycHRvdGFsUm93Lm5leHRTaWJsaW5nKTsKICB9IGVsc2Ugewog
+ICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoInlvdVNhdmVkIikudGV4dENvbnRlbnQgPSBg4oK5
+JHt5b3VTYXZlZC50b0ZpeGVkKDIpfWA7CiAgfQp9CgovLyBBcHBseSBjb3Vwb24KYXBwbHlDb3Vw
+b25CdG4uYWRkRXZlbnRMaXN0ZW5lcigiY2xpY2siLCAoKSA9PiB7CiAgY29uc3QgY29kZSA9IGNv
+dXBvbklucHV0LnZhbHVlLnRyaW0oKS50b1VwcGVyQ2FzZSgpOwogIGRpc2NvdW50ID0gMDsKCiAg
+aWYgKGNvZGUgPT09ICJOREFZMTAiICYmIG9mZmVyVG90YWwgPj0gMTk5OSkgewogICAgY29uc3Qg
+cmFuZG9tUGVyY2VudCA9IChNYXRoLnJhbmRvbSgpICogKDguNSAtIDUpICsgNSkudG9GaXhlZCgy
+KTsKICAgIGRpc2NvdW50ID0gTWF0aC5mbG9vcihvZmZlclRvdGFsICogcmFuZG9tUGVyY2VudCAv
+IDEwMCk7CiAgICBjb3Vwb25Nc2cudGV4dENvbnRlbnQgPSBgTkRBWTEwIGFwcGxpZWQhIFlvdSBn
+b3QgJHtyYW5kb21QZXJjZW50fSUgb2ZmLiBZb3Ugc2F2ZWQg4oK5JHtkaXNjb3VudH1gOwogICAg
+Y291cG9uTXNnLnN0eWxlLmNvbG9yID0gImdyZWVuIjsKICB9IGVsc2UgaWYgKGNvZGUgPT09ICJP
+REFZNSIgJiYgb2ZmZXJUb3RhbCA+PSA0OTkpIHsKICAgIGNvbnN0IHJhbmRvbVBlcmNlbnQgPSAo
+TWF0aC5yYW5kb20oKSAqICg0LjUgLSAwLjgpICsgMC44KS50b0ZpeGVkKDIpOwogICAgZGlzY291
+bnQgPSBNYXRoLmZsb29yKG9mZmVyVG90YWwgKiByYW5kb21QZXJjZW50IC8gMTAwKTsKICAgIGNv
+dXBvbk1zZy50ZXh0Q29udGVudCA9IGBPREFZNSBhcHBsaWVkISBZb3UgZ290ICR7cmFuZG9tUGVy
+Y2VudH0lIG9mZi4gWW91IHNhdmVkIOKCuSR7ZGlzY291bnR9YDsKICAgIGNvdXBvbk1zZy5zdHls
+ZS5jb2xvciA9ICJncmVlbiI7CiAgfSBlbHNlIHsKICAgIGNvdXBvbk1zZy50ZXh0Q29udGVudCA9
+ICJJbnZhbGlkIG9yIGluZWxpZ2libGUgY291cG9uLiI7CiAgICBjb3Vwb25Nc2cuc3R5bGUuY29s
+b3IgPSAicmVkIjsKICAgIHVwZGF0ZVRvdGFscygpOwogICAgcmV0dXJuOwogIH0KCiAgdXBkYXRl
+VG90YWxzKCk7Cn0pOwoKLy8gVG9nZ2xlIGNvdXBvbiBpbnB1dApkb2N1bWVudC5nZXRFbGVtZW50
+QnlJZCgidG9nZ2xlQ291cG9uIikuYWRkRXZlbnRMaXN0ZW5lcigiY2xpY2siLCAoKSA9PiB7CiAg
+ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImNvdXBvbkZvcm0iKS5jbGFzc0xpc3QudG9nZ2xlKCJo
+aWRkZW4iKTsKfSk7CgovLyBJbml0aWFsIGNhbGwKcmVuZGVyQ2FydEl0ZW1zKCk7Cg==`;
 
-// DOM elements
-const orderSummary = document.getElementById("orderSummary");
-const subtotalEl = document.getElementById("subtotal");
-const totalEl = document.getElementById("total");
-const mrptotalEl = document.getElementById("mrpTotal");
-const subtotalRow = document.getElementById("subtotalRow");
-const mrptotalRow = document.getElementById("mrptotalRow");
-const couponMsg = document.getElementById("couponMessage");
-const applyCouponBtn = document.getElementById("applyCoupon");
-const couponInput = document.getElementById("couponCode");
 
-// Render cart items
-function renderCartItems() {
-  document.querySelectorAll(".order-row.dynamic").forEach(row => row.remove());
-  offerTotal = 0;
-  mrpTotal = 0;
-
-  cartItems.forEach(item => {
-    const qty = item.qty || 1;
-    const offerPrice = item.offerPrice || 0;
-    const mrp = item.mrp || offerPrice;
-    const itemTotal = offerPrice * qty;
-    const itemMrpTotal = mrp * qty;
-
-    offerTotal += itemTotal;
-    mrpTotal += itemMrpTotal;
-
-    const row = document.createElement("div");
-    row.className = "order-row dynamic";
-    row.innerHTML = `
-      <span>${item.title} × ${qty}</span>
-      <span>₹${itemTotal.toFixed(2)}</span>
-    `;
-    orderSummary.insertBefore(row, mrptotalRow);
-  });
-
-  updateTotals();
-}
-
-// Calculate and update totals
-function updateTotals() {
-  const youSaved = mrpTotal - offerTotal;
-
-  // Determine shipping cost (default logic, will be overridden on order place)
-  shipping = 0;
-  if (offerTotal < 499) shipping = 59;
-  else if (offerTotal < 1499) shipping = 99;
-
-  // Create or update shipping row
-  let shippingRow = document.getElementById("shippingRow");
-  if (!shippingRow) {
-    shippingRow = document.createElement("div");
-    shippingRow.className = "order-row";
-    shippingRow.id = "shippingRow";
-    shippingRow.innerHTML = `<span>Shipping</span><span id="shippingFee">₹${shipping}</span>`;
-    orderSummary.insertBefore(shippingRow, document.getElementById("youSavedRow")?.nextSibling || subtotalRow.nextSibling);
-  } else {
-    document.getElementById("shippingFee").textContent = `₹${shipping}`;
+(function () {
+  try {
+    const decodedCode = atob(__ENCODED_CODE__.replace(/\s+/g, ""));
+    new Function(decodedCode)();
+  } catch (e) {
+    console.error(e);
   }
-
-  subtotalEl.textContent = `₹${offerTotal.toFixed(2)}`;
-  mrptotalEl.textContent = `₹${mrpTotal.toFixed(2)}`;
-  totalEl.textContent = `₹${Math.max(offerTotal - discount + shipping, 0).toFixed(2)}`;
-
-  let savedRow = document.getElementById("youSavedRow");
-  if (!savedRow) {
-    savedRow = document.createElement("div");
-    savedRow.className = "order-row";
-    savedRow.id = "youSavedRow";
-    savedRow.innerHTML = `<span>You Saved</span><span id="youSaved" style="color: green;">₹${youSaved.toFixed(2)}</span>`;
-    orderSummary.insertBefore(savedRow, mrptotalRow.nextSibling);
-  } else {
-    document.getElementById("youSaved").textContent = `₹${youSaved.toFixed(2)}`;
-  }
-}
-
-// Apply coupon
-applyCouponBtn.addEventListener("click", () => {
-  const code = couponInput.value.trim().toUpperCase();
-  discount = 0;
-
-  if (code === "NDAY10" && offerTotal >= 1999) {
-    const randomPercent = (Math.random() * (8.5 - 5) + 5).toFixed(2);
-    discount = Math.floor(offerTotal * randomPercent / 100);
-    couponMsg.textContent = `NDAY10 applied! You got ${randomPercent}% off. You saved ₹${discount}`;
-    couponMsg.style.color = "green";
-  } else if (code === "ODAY5" && offerTotal >= 499) {
-    const randomPercent = (Math.random() * (4.5 - 0.8) + 0.8).toFixed(2);
-    discount = Math.floor(offerTotal * randomPercent / 100);
-    couponMsg.textContent = `ODAY5 applied! You got ${randomPercent}% off. You saved ₹${discount}`;
-    couponMsg.style.color = "green";
-  } else {
-    couponMsg.textContent = "Invalid or ineligible coupon.";
-    couponMsg.style.color = "red";
-    updateTotals();
-    return;
-  }
-
-  updateTotals();
-});
-
-// Toggle coupon input
-document.getElementById("toggleCoupon").addEventListener("click", () => {
-  document.getElementById("couponForm").classList.toggle("hidden");
-});
-
-// Initial call
-renderCartItems();
+})();
