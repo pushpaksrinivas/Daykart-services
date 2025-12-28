@@ -3,18 +3,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-// Firebase config with environment variables
-export const firebaseConfig = {
-    apiKey: "AIzaSyDsP80XFSykRlteD8LTQaw76TD8AJItMFw",
-    authDomain: "daykart-77771.firebaseapp.com",
-    projectId: "daykart-77771",
-    storageBucket: "daykart-77771.firebasestorage.app",
-    messagingSenderId: "533666061468",
-    appId: "1:533666061468:web:f56261c5f1cbcc0d776159",
-    measurementId: "G-EDMNTSSJGY"
-  };
+// 🔐 Base64-encoded Firebase config
+const _enc =
+  "ewogICJhcGlLZXkiOiAiQUl6YVN5RHNQODBYRlN5a1JsdGVEOExUUWF3NzZURDhBSkl0TUZ3IiwKICAiYXV0aERvbWFpbiI6ICJkYXlrYXJ0LTc3NzcxLmZpcmViYXNlYXBwLmNvbSIsCiAgInByb2plY3RJZCI6ICJkYXlrYXJ0LTc3NzcxIiwKICAic3RvcmFnZUJ1Y2tldCI6ICJkYXlrYXJ0LTc3NzcxLmZpcmViYXNlc3RvcmFnZS5hcHAiLAogICJtZXNzYWdpbmdTZW5kZXJJZCI6ICI1MzM2NjYwNjE0NjgiLAogICJhcHBJZCI6ICIxOjUzMzY2NjA2MTQ2ODp3ZWI6ZjU2MjYxYzVmMWNiY2MwZDc3NjE1OSIsCiAgIm1lYXN1cmVtZW50SWQiOiAiRy1FRE1OVFNTSkdZIgp9Cg==";
 
-// Initialize Firebase
+// 🔓 Decode Base64 → JSON → Object
+export const firebaseConfig = JSON.parse(atob(_enc));
+
+// Initialize Firebase (unchanged behavior)
 const app = initializeApp(firebaseConfig);
+
 export const db = getFirestore(app);
 export const auth = getAuth(app);
